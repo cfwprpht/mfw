@@ -9,20 +9,28 @@
 #
  
 # Priority: 2900
-# Description: Change a specific file in CORE_OS_PACKAGE manually
+# Description: Change a specific file in CoreOS manually
+
+# Option --change-filenames: Filenames to change (must start with 'CORE_OS_PACKAGE/')
+
+# Type --change-filenames: textarea
 
 
 namespace eval change_coreos_files {
 
 	array set ::change_coreos_files::options {
-        --change_coreos_files true
+        --change-filenames "CORE_OS_PACKAGE/path/to/file/to/change"
     }
 
     proc main {} {
-	
-		set self "appldr"
-
-        ::modify_coreos_file $self ::change_coreos_files::change_file
+        variable options
+        foreach file [split $options(--change-filenames) "\n"] {
+            if {[string equal -length 20 "CORE_OS_PACKAGE/path" ${file}] != 1} {
+                if {[string equal -length 16 "CORE_OS_PACKAGE/" ${file}] == 1} {
+                    ::modify_coreos_file ${file} ::change_coreos_files::change_file
+                }
+            }
+        }
     }
 
     proc change_file {$self} {
