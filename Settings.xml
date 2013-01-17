@@ -1,9 +1,9 @@
 <Settings>
-    <language>English</language>
-<BUILD_DIR></BUILD_DIR>
-<PS3_KEYS></PS3_KEYS>
+    <language>German_Deutsch</language>
+<BUILD_DIR>C:/Users/cfwprophet/Desktop/TOOLS/ps3mfw/Work</BUILD_DIR>
+<PS3_KEYS>C:/Users/cfwprophet/Desktop/TOOLS/ps3mfw/tools/.ps3</PS3_KEYS>
     <Theme>xpnative</Theme>
-    <IN_FILE></IN_FILE>
-    <OUT_FILE></OUT_FILE>
-<tasks> add_license_msg change_version patch_category_game</tasks>
+    <IN_FILE>C:/Users/cfwprophet/Desktop/TOOLS/ps3mfw/PS3UPDAT430.PUP</IN_FILE>
+    <OUT_FILE>C:/Users/cfwprophet/Desktop/TOOLS/ps3mfw/test.pup</OUT_FILE>
+<tasks> auto_gen_cfw</tasks>
 </Settings>

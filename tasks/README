@@ -5,16 +5,79 @@
   /   ____/\____  \  __(__  < /         \ /   __)\   \/\/   / 
  /   /     /       \/        \   /\/\    Y   /    \        /  
 /___/     /________/_________/__/    \___|__/      \__/\__/   
-                               PS3MFW tasks v0.2.15 OtherOS++
+                               PS3MFW tasks v0.3 OtherOS++ / CFW 4.xx
 ==============================================================
 
-Several exciting new tasks have been created. The most interesting one is a new privacy patch, which keeps PS3 from sending personally identifiable information to many configurable domain names: After jailbreak became available for PS3, reverse engineers discovered that the PS3 collects a multitude of personal information without your knowledge, such as such as your TV model, a list of all usb devices (including product IDs) you ever plugged into your PS3, usage statistics, which games and media you play and more.
+Big major clean up and update of MFW Builder. I merged task's and added new ones like lv2,lv0,appldr and all other excluding lv1 patches are merged into the patch_cos.tcl. I leave the lv1 patches like they are in case of the amount of the patches. WE have the new auto generate MFW/CFW script which will (like the name indicate) auto genrate predefined MFW/CFW 's. This script have a lot of checks implemented to save the user for bricking his console. One of this checks is a SHA1 checksum test on the input PUP which will verifiy if the input PUP is a Official non corrupted one. Also you can not use any OFW PUP as input PUP anymore. The auto gen script is exactly predefined also for input FW's which mean's for Rogero MFW/CFW you only can use 4.30 OFW and for OtherOS++ only OFW 3.55 is allowed to time. A self defined MFW can use a few more FW's as input. If you are a more advanced user you can deactivate this check and use any PUP as input just like in previous versions.
 
-The Digital Millenium Copyright Act (DMCA) specifically allows for consumers to circumvent technological protection measures in order to protect their privacy. Even though there was little doubt concerning the legality of PS3MFW Builder before because it in itself does not circumvent any technological protection measures, this new feature makes using it inside the USA fully DMCA compliant.
+Then i added some more custom XMB thing's like to modify the xmb system sound's, gameboot image and the coldboot message. Inspired by PSDev and to be more user frindly i removed the task's for to add the moded .wav file to the .rco to just and simply change the modded .rco. So if some one have a modded .rco ready he just need to share the file in a forum. End user's then simply put the file into the correct folder (eg. /systemRCO [for the system sound's]) within the templat folder and then just choose the rco from the option in MFW Builder to inject/replace the moded file. Coldboot message is not ready yet.
 
-Additionally, several new customizations including a firmware version spoofer, a way to edit the look and sound of the boot sequence by inserting your own coldboot files, and a task to replace the default "Airbush" XMB theme. Now it can also create modified firmwares that can be installed on PS3s with broken Blu-Ray drives as well as create firmwares that can convert demo (kiosk/shop) units into regular retail PS3s! A bug that prevented USB storage devices from being shown under Game Data Utility was fixed.
+I added and changed such a lot of stuff that i would to be annoying you if i would note here everything i have done. The list below is long enough to read ^^
 
-The new tasks can be found at www.git-hacks.com/ps3mfw
+-------------------------------------
+Unofficial 0.3 update 'cfwprpht'
+-------------------------------------
+- Major Clean Up
+- Added support for 4.xx CFW
+- Added spkg tool's
+- Added scetool to decrypt self'S and to re-sign, they are now correctly rebuilded for 4.xx CFW (self_rebuilder will no longer be used to rebuild self's)
+- Added a SHA1 check on the input PUP which will be verified against a db with knowen valid SHA1 sum (thx to fciv.exe) for enduser's only OFW 3.55 / 4.30 / 4.31 and Debug 3.55 are allowed
+- Added new option to disable the new SHA1 check (for special purpose and dev's)
+- Added a secret hidden option for dev's to add new SHA1 sum of PUP's to the db
+- Merged and re-arranged tasks/commands to speed up patching process
+- Added Templat dir and templat icons for the segments in the homebrew category
+- Added templat.xml whith 'AC1D CFW' pkg-mgr, homebrew and emulator segment
+- Added standalone '*Install Package Files' app to MFW
+- Added a command which will create a custom dir in dev_flash for us (to use for templat imgs or the standalone Install Packages app)
+- Updated Spoof task up to including 4.31
+- Removed standart FirmWare spoofing in case of you can use Jailbait patch and have the same result 
+- Added a new Hombrew Category patch which will merge Network cat with PSN cat and use Network cat as HomeBrew cat if one of the 4 new segment patches are used
+- Merged ssl patches, nas_plugin and the nonretail patches to patch_vsh.tcl
+- Updated Jailbait patches and merged them with Patch_vsh.tcl to make it more specific and speed up patching process
+- Added patch_lv2_npdrm_ecdsa_check to the jailbait patches category
+- Added customize_mfw.tcl and merged cooldboot patches into it
+- Added patch_pup.tcl and merged broken bluray, broken bluetooth, change pup version, shop2retail and retail2shop to it
+- Added patch_cos.tcl and merged lv0, lv2, spu pkg rvk verifier and emer init patches to it to speed up patching process
+- Added patch-lv0-coreos-ecdsa-check: Patch to disable CoreOS ECDSA check in LV0 (needed for 4.xx CFW)
+- Added patch-lv1-remove-lv2-protection: Remove LV2 protection (needed for 4.xx CFW)
+- Added patch-lv2-payload-hermes-355: Patch to implement hermes LV2 payload with SC8 and /app_home/ redirection 3.55
+- Added patch-lv2-SC36-355: Patch to implement SysCall36 3.55
+- Added patch-lv2-peek-poke-4x: Patch to add Peek&Poke system calls to LV2 4.xx
+- Added patch-lv2-lv1-peek-poke-4x: Patch to add LV1 Peek&Poke system calls to LV2 4.xx (LV1 peek/poke patch necessary)
+- Added patch-lv2-npdrm-ecdsa-check: Jailbait - Patch to disable NPDRM ECDSA check 4.xx
+- Added patch-lv2-payload-hermes-4x: Patch to implement hermes LV2 payload SC8 /app_home/ redirection & embended app mount 4.xx
+- Added patch-lv2-SC36-4x: Patch to implement SysCall36 4.xx
+- Added patch-spkg-ecdsa-check: Patch to disable ECDSA check for spkg files (needed for 4.xx CFW)
+- Added patch-alpha-sort: Alphabetical sort Order for Games in the XMB
+- Added patch-rape-sfo: Rape the SFO Param's X0 (NeoGeo) and X4 (PCEngine) to use with the Homebrew category and custome segments
+- Added add-install-pkg: Add the standart Install Package Files Segment to the HomeBrew Category in XMB
+- Added add-pkg-mgr: Add MFW PKG Manager Segment to the HomeBrew Category in XMB
+- Added add-hb-seg: Add MFW HomeBrew Segment to the HomeBrew Category in XMB
+- Added add-emu-seg: Add MFW Emulator Segment to the HomeBrew Category in XMB
+- Added patch-vsh-react-psn-v2-debug-341: Patch to implement ReactPSN v2.0 into VSH 3.41 DEBUG
+- Added patch-vsh-react-psn-v2-debug-355: Patch to implement ReactPSN v2.0 into VSH 3.55 DEBUG
+- Added patch-vsh-react-psn-v2-341: Patch to implement ReactPSN v2.0 into VSH 3.41
+- Added patch-vsh-react-psn-v2-355: Patch to implement ReactPSN v2.0 into VSH 3.55
+- Added patch-vsh-react-psn-v2-4x: Patch to implement ReactPSN v2.0 into VSH 4.xx
+- Added customize-coldboot-health-screen: Change default coldboot Healthscreen
+- Added customize-xmb-wave: Change the default XMB wave
+- Added customize-game-boot-rco: Change default gameboot RCO
+- Added customize-system-sound-rco: Change default system sound RCO
+- Added customize-embended-app: Change default embended app (* Install Package Files) to a custome one
+- Added customize-fw-version: Change default fw version in XMB
+- Fixed task Shop to retail, delating of promo_flags.txt was missing
+- Fixed task Change CoreOS file, just a few typo's
+- Fixed task Jailbait, just a few typo's again
+- Added version-suffix combobox to reduce string fields for FW version suffixes, Added -MFW, Promotial-to-Retail, Retail-to-Promotial, OtherOS++, AC1D
+- Added old/new * Install Package Files (Szalay and "hidden Man" patch)
+- Corrected some old and new bugs
+- Added a script to auto generate predefinated cfw's (added AC1D, Rogero, OtherOS++)
+- Added option to customize pre-defined CFW's (only the task customize_firmware is allowed)
+- Added task to swap the videoplayer_plugin.sprx to disable cinavia protection (4.xx only to time)
+- Greetz to euss, i fixed the self_rebuilder problem by adding scetool and a simply "if" command ;)
+
+Thanks: Anonymous Developers (Code Monkeys), git-hacks.com, eussNL, neahrwert and flatz, f0f, *'The graf' aka grafchockolo*, KaKaRoToKS, Hermes (we miss you), glu0n, Rogero, Szalay and "hidden Man", Team Rebug and every one else i forgot.
+
 
 -------------------------------
 Unofficial 0.2.15 update 'euss'
