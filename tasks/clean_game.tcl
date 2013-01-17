@@ -74,3 +74,4 @@ namespace eval ::clean_game {
         ::xml::SaveToFile $xml $file
     }
 }
+
