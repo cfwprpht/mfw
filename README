@@ -5,8 +5,18 @@
   /   ____/\____  \  __(__  < /         \ /   __)\   \/\/   / 
  /   /     /       \/        \   /\/\    Y   /    \        /  
 /___/     /________/_________/__/    \___|__/      \__/\__/   
-                             PS3MFW Builder v0.2.13 OtherOS++
+                             PS3MFW Builder v0.3 OtherOS++ / 4.xx MFW
 ==============================================================
+
+----------
+UNOFFICIAL
+----------
+
+Finally i decided to give that unofficial release the version v0.3 in case of the massive changes to MFW Builder. We have now 4.xx FW support and there for i added a lot of new things and apps's like new_pkg which also generate a spkg matching with the input pkg, i removed self_rebuilder and added scetool to decrypt SELF's and to rebuild the SELF's. For the last option i coded a own routine which check the input SELF and set up the correct variables to use with scetool. Then we have a new script to auto generate predefined MFW/CFW-'s like the puplic released one's. To make MFW Builder a bit more secure for the avarage end user i added a SHA1 checksum test on the input PUP which can also be disabled per option for the more advanced user. And dev's which maybe plan to release there next CFW via script for MFW Builder can enable a hidden option in the file 'mfw' to add a new SHA1 checksum of the input PUP to the db.xml. So they also can use there old CFW as input and only apply the new changes to it. So dev's don't need to share copyright protected stuff and the end user don't need to download a 200MB file every time or for every CFW and/or store more then 1 OFW on his PC.
+
+And thats even not all what is new. I will continue working on MFW to make it an even more usefull tool then it allread y is right now.
+
+Big THX to git-hacks.com and Anonymous Developers (Code Monkeys) for this great tool.
 
 ------------
 INTRODUCTION
