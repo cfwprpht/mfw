@@ -1,0 +1,71 @@
+$ git status
+[...]
+# Untracked files:
+[...]
+#       tasks/nonretail/patch_nas_plugin.tcl
+#       tasks/unsafe/add_356keys_to_appldr341.tcl
+#       tasks/unsafe/add_360keys_to_appldr355.tcl
+#       tasks/unsafe/patch_appldr.tcl
+#       tasks/broken_bluetooth.tcl
+#       tasks/broken_blueray.tcl
+#       tasks/change_coldboot_files.tcl
+#       tasks/change_ssl_cer.tcl
+#       tasks/change_theme.tcl
+#       tasks/change_version.tcl
+#       tasks/homebrew_category.tcl
+#       tasks/jailbait.tcl
+#       tasks/language_pack.tcl
+#       tasks/patch_appldr.tcl
+#       tasks/patch_emer_init.tcl
+#       tasks/patch_lv2.tcl
+#       tasks/patch_nas_plugin.tcl
+#       tasks/patch_shop.tcl
+#       tasks/patch_shop2.tcl
+#       tasks/spoof_version.tcl
+#       tasks/patch_category_game.tcl
+#       tasks/patch_profile.tcl
+#       tasks/patch_translation.tcl
+#       tasks/tv_category.tcl
+#       tools/data/keys
+#       tools/data/ldr_curves
+#       tools/data/vsh_curves
+#       tools/data/zlib1.dll
+[...]
+$ cat tasks/.gitignore
+broken_bluetooth.tcl
+broken_blueray.tcl
+change_coldboot_files.tcl
+change_ssl_cer.tcl
+change_theme.tcl
+change_version.tcl
+homebrew_category.tcl
+jailbait.tcl
+language_pack.tcl
+patch_appldr.tcl
+patch_emer_init.tcl
+patch_lv2.tcl
+patch_nas_plugin.tcl
+patch_shop.tcl
+patch_shop2.tcl
+spoof_version.tcl
+patch_category_game.tcl
+patch_profile.tcl
+patch_translation.tcl
+tv_category.tcl
+$ cat tasks/nonretail/.gitignore
+patch_nas_plugin.tcl
+$ cat tasks/unsafe/.gitignore
+add_356keys_to_appldr341.tcl
+add_360keys_to_appldr355.tcl
+patch_appldr.tcl
+$ cat tools/data/.gitignore
+keys
+ldr_curves
+vsh_curves
+zlib1.dll
+$ git status
+[...]
+# Untracked files:
+[...]
+#       
+[...]
