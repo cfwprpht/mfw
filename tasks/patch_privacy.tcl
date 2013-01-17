@@ -8,8 +8,8 @@
 # License ("GPL") version 3, as published by the Free Software Foundation.
 #
 
-# Priority: 600
-# Description: Patch all self/sprx to secure privacy
+# Priority: 1000
+# Description: Patch secure privacy (Block Online Games/Sys Updates)
 
 # Option --patch-playstation-com: Patch communication to playstation.com
 # Option --patch-playstation-net: Patch communication to playstation.net
@@ -58,7 +58,6 @@ namespace eval ::patch_privacy {
     }
 
     proc main { } {
-
         if {$::patch_privacy::options(--patch-allmusic)} {
             set selfs {x3_amgsdk.sprx}
             ::modify_devflash_files [file join dev_flash vsh module] $selfs ::patch_privacy::patch_allmusic_com_self
@@ -92,10 +91,10 @@ namespace eval ::patch_privacy {
             ::modify_devflash_files [file join dev_flash vsh module] $selfs ::patch_privacy::patch_playstation_com_self
         }
         if {$::patch_privacy::options(--patch-playstation-net)} {
-        set selfs {libad_core.sprx libmedi.sprx libsysutil_np_clans.sprx libsysutil_np_commerce2.sprx libsysutil_np_util.sprx}
+            set selfs {libad_core.sprx libmedi.sprx libsysutil_np_clans.sprx libsysutil_np_commerce2.sprx libsysutil_np_util.sprx}
             ::modify_devflash_files [file join dev_flash sys external] $selfs ::patch_privacy::patch_playstation_net_self
-
-        set selfs {autodownload_plugin.sprx download_plugin.sprx esehttp.sprx eula_cddb_plugin.sprx eula_hcopy_plugin.sprx eula_net_plugin.sprx explore_category_friend.sprx explore_category_game.sprx explore_category_music.sprx explore_category_network.sprx explore_category_photo.sprx explore_category_psn.sprx explore_category_sysconf.sprx explore_category_tv.sprx explore_category_user.sprx explore_category_video.sprx explore_plugin.sprx explore_plugin_ft.sprx explore_plugin_np.sprx friendtrophy_plugin.sprx game_ext_plugin.sprx hknw_plugin.sprx nas_plugin.sprx newstore_plugin.sprx np_eula_plugin.sprx np_trophy_plugin.sprx np_trophy_util.sprx photo_network_sharing_plugin.sprx profile_plugin.sprx regcam_plugin.sprx sysconf_plugin.sprx videoeditor_plugin.sprx videoplayer_plugin.sprx videoplayer_util.sprx vsh.self x3_mdimp11.sprx x3_mdimp7.sprx}
+         
+            set selfs {autodownload_plugin.sprx download_plugin.sprx esehttp.sprx eula_cddb_plugin.sprx eula_hcopy_plugin.sprx eula_net_plugin.sprx explore_category_friend.sprx explore_category_game.sprx explore_category_music.sprx explore_category_network.sprx explore_category_photo.sprx explore_category_psn.sprx explore_category_sysconf.sprx explore_category_tv.sprx explore_category_user.sprx explore_category_video.sprx explore_plugin.sprx explore_plugin_ft.sprx explore_plugin_np.sprx friendtrophy_plugin.sprx game_ext_plugin.sprx hknw_plugin.sprx nas_plugin.sprx newstore_plugin.sprx np_eula_plugin.sprx np_trophy_plugin.sprx np_trophy_util.sprx photo_network_sharing_plugin.sprx profile_plugin.sprx regcam_plugin.sprx sysconf_plugin.sprx videoeditor_plugin.sprx videoplayer_plugin.sprx videoplayer_util.sprx vsh.self x3_mdimp11.sprx x3_mdimp7.sprx}
             ::modify_devflash_files [file join dev_flash vsh module] $selfs ::patch_privacy::patch_playstation_net_self
         }
         if {$::patch_privacy::options(--patch-playstation-org)} {
