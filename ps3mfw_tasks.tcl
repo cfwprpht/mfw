@@ -89,14 +89,40 @@ proc build_mfw {input output tasks} {
     }
 
     clean_up
+	
+	# Add the input OFW SHA1 to the DB
+	if {${::SHADD} == "true"} {
+	    debug "Adding the SHA1 of the Input PUP to the DB"
+		sha1_check ${input}
+	}
+
+    # Check input OFW PUP SHA1
+	if {${::SHCHK} == "true"} {
+	    set catch [catch [sha1_verify ${input}]]
+	    if {$catch == 1} {
+		    log "Error!!"
+			log "SHA1 of input PUP do not match any knowen SHA1"
+			after 20000
+			exit 0
+		} elseif {$catch == 0} {
+		    log "PUP SHA1 of input OFW match knowen SHA1!"
+		}
+		unset catch
+	}
 
     # PREPARE PS3UPDAT.PUP for modification
     unpack_source_pup ${input} ${::CUSTOM_PUP_DIR}
 
     extract_tar ${::CUSTOM_UPDATE_TAR} ${::CUSTOM_UPDATE_DIR}
+    extract_tar ${::CUSTOM_SPKG_TAR} ${::CUSTOM_SPKG_DIR}
 
     # copy original PUP to working dir
     copy_file ${::CUSTOM_PUP_DIR} ${::ORIGINAL_PUP_DIR}
+
+    # set the pup version into a variable so commands later can check it and do fw specific thingy's
+	debug "checking pup version"
+    set ::SUF [::get_pup_version]
+	debug "Getting pup version OK! var = ${::SUF}"
 
     log "Unpacking all dev_flash files"
     unpkg_devflash_all ${::CUSTOM_DEVFLASH_DIR}
@@ -110,11 +136,21 @@ proc build_mfw {input output tasks} {
 
     # RECREATE PS3UPDAT.PUP
     file delete -force ${::CUSTOM_DEVFLASH_DIR}
+	debug "custom dev_flash deleted"
+	set filesSPKG [lsort [glob -directory ${::CUSTOM_SPKG_DIR} *.1]]
+	debug "spkg's added to list"
     set files [lsort [glob -nocomplain -tails -directory ${::CUSTOM_UPDATE_DIR} *.pkg]]
+	debug "pkg's added to list"
     eval lappend files [lsort [glob -nocomplain -tails -directory ${::CUSTOM_UPDATE_DIR} *.img]]
+	debug "img's added to list"
     eval lappend files [lsort [glob -nocomplain -tails -directory ${::CUSTOM_UPDATE_DIR} dev_flash3_*]]
+	debug "dev_flash 3 added to list"
     eval lappend files [lsort [glob -nocomplain -tails -directory ${::CUSTOM_UPDATE_DIR} dev_flash_*]]
-    create_tar ${::CUSTOM_UPDATE_TAR}  ${::CUSTOM_UPDATE_DIR} ${files}
+	debug "dev_flash added to list"
+    create_tar ${::CUSTOM_UPDATE_TAR} ${::CUSTOM_UPDATE_DIR} ${files}
+	debug "PKG TAR created"
+    create_tar ${::CUSTOM_SPKG_TAR} ${::CUSTOM_SPKG_DIR} ${filesSPKG}
+	debug "SPKG TAR created"
 
     pack_custom_pup ${::CUSTOM_PUP_DIR} ${::OUT_FILE}
 }

@@ -80,8 +80,8 @@ proc grep {re args} {
                 lappend result [list $file $line $l]
             }
             incr l
-        }
-        close $fp
+        } 
+		close $fp
     }
     set result
 }
@@ -238,8 +238,94 @@ proc tail {filename {n 10}} {
     return [join $lines "\n"]
 }
 
+proc create_mfw_dir {args} {   
+    catch_die {file mkdir $args} "Could not create dir $args"
+}
+
+
 proc copy_file {args} {
-    catch_die {file copy {*}${args}} "Unable to copy $args"
+    catch_die {file copy {*}$args} "Unable to copy $args"
+}
+
+proc sha1_check {file} {
+    shell ${::fciv} -add [file nativename $file] -wp -sha1 -xml db.xml
+}
+
+proc sha1_verify {file} {
+    shell ${::fciv} [file nativename $file] -v -sha1 -xml db.xml
+}
+
+proc delete_file {args} {
+    catch_die {file delete {*}$args} "Unable to delete $args"
+}
+
+proc rename_file {src dst} {
+    catch_die {file rename {*}$src $dst} "Unable to rename and/or move $src $dst"
+}
+
+proc delete_promo { } {
+    delete_file -force ${::CUSTOM_PROMO_FLAGS_TXT}
+}
+
+proc copy_spkg { } {
+    debug "searching for spkg"
+    set spkg [glob -directory ${::CUSTOM_UPDATE_DIR} *.1]
+	debug "spkg found in $spkg"
+	debug "copy new spkg into spkg dir"
+    copy_file -force $spkg ${::CUSTOM_SPKG_DIR}
+	if {[file exists [file join $spkg]]} {
+	debug "removing spkg from working dir"
+	delete_file -force $spkg
+	}
+} 
+
+proc copy_mfw_imgs { } {
+    create_mfw_dir
+    copy_file -force ${::CUSTOM_IMG_DIR} ${::CUSTOM_MFW_DIR}
+}
+
+# routine to copy standalone '*Install Package Fiels' app into MFW
+proc copy_ps3_game {arg} {
+    variable option
+    set arg0 $::patch_xmb::options(--add-install-pkg)
+    set arg1 $::patch_xmb::options(--add-pkg-mgr)
+    set arg2 $::patch_xmb::options(--add-hb-seg)
+    set arg3 $::patch_xmb::options(--add-emu-seg)
+    set arg4 [file exists $::customize_firmware::options(--customize-embended-app) == 0]
+    
+    if { $arg0 || $arg1 || $arg2 || $arg3  && !$arg4 } {
+        rename_file -force $arg ${::CUSTOM_EMBENDED_APP}
+    } elseif { $arg0 || $arg1 || $arg2 || $arg3  && $arg4 } {
+        copy_file -force $arg ${::CUSTOM_MFW_DIR}
+    } elseif { !$arg0 && !$arg1 && !$arg2 && !$arg3 && !$arg4 } {
+        create_mfw_dir
+        rename_file -force $arg ${::CUSTOM_EMBENDED_APP}
+    } elseif { !$arg0 && !$arg1 && !$arg2 && !$arg3 && $arg4 } {
+        create_mfw_dir
+        copy_file -force $arg ${::CUSTOM_MFW_DIR}
+    }
+	unset arg0, arg1, arg2, arg3, arg4
+}
+
+proc copy_ps3_game_standart { } {
+    set ttf "SCE-PS3-RD-R-LATIN.TTF"
+	debug "using font file .ttf as argument to search for"
+	debug "cause we need a tar with a bit space in it"
+    modify_devflash_file [file join dev_flash data font $ttf] callback_ps3_game_standart
+}
+
+proc callback_ps3_game_standart { file } {
+    log "Creating custom directory in dev_flash"
+	create_mfw_dir ${::CUSTOM_MFW_DIR}
+	if {${::CFW} == "AC1D"} {
+	    log "Installing standalone 'Custom FirmWare' app"
+	    copy_file -force ${::CUSTOM_PS3_GAME2} ${::CUSTOM_MFW_DIR}
+		log "Copy custom imgs into dev_flash"
+	    copy_file -force ${::CUSTOM_IMG_DIR} ${::CUSTOM_MFW_DIR}
+	} else {
+	    log "Installing standalone '*Install Package Files' app"
+	    copy_file -force ${::CUSTOM_PS3_GAME} ${::CUSTOM_MFW_DIR}
+	}
 }
 
 proc pup_extract {pup dest} {
@@ -262,7 +348,7 @@ proc pup_get_build {pup} {
     if {[binary scan $build W build_ver] != 1} {
         error "Cannot read 64 bit big endian from [hexify $build]"
     }
-
+	
     return $build_ver
 }
 
@@ -295,11 +381,19 @@ proc find_devflash_archive {dir find} {
     return ""
 }
 
-proc unpkg { pkg dest } {
+proc spkg {pkg} {
+    shell ${::SPKG} [file nativename $pkg]
+}
+
+proc new_pkg {pkg dest} {
+    shell ${::NEWPKG} retail [file nativename $pkg] [file nativename $dest]
+}
+
+proc unpkg {pkg dest} {
     shell ${::UNPKG} [file nativename $pkg] [file nativename $dest]
 }
 
-proc pkg { pkg dest } {
+proc pkg {pkg dest} {
     shell ${::PKG} retail [file nativename $pkg] [file nativename $dest]
 }
 
@@ -311,6 +405,16 @@ proc unpkg_archive {pkg dest} {
 proc pkg_archive {dir pkg} {
     debug "pkg-ing file [file tail $pkg]"
     catch_die {pkg $dir $pkg} "Could not pkg file [file tail $pkg]"
+}
+
+proc new_pkg_archive {dir pkg} {
+    debug "pkg-ing / spkg-ing file [file tail $pkg]"
+    catch_die {new_pkg $dir $pkg} "Could not pkg / spkg file [file tail $pkg]"
+}
+
+proc spkg_archive {pkg} {
+    debug "spkg-ing file [file tail $pkg]"
+    catch_die {spkg $pkg} "Could not spkg file [file tail $pkg]"
 }
 
 proc unpkg_devflash_all {dir} {
@@ -339,7 +443,7 @@ proc cospkg_package { dir pkg } {
 }
 
 proc modify_coreos_file { file callback args } {
-    log "Modifying CORE_OS file [file tail $file]"
+    log "Modifying CORE_OS file [file tail $file]"   
     set pkg [file join ${::CUSTOM_UPDATE_DIR} CORE_OS_PACKAGE.pkg]
     set unpkgdir [file join ${::CUSTOM_UPDATE_DIR} CORE_OS_PACKAGE.unpkg]
     set cosunpkgdir [file join ${::CUSTOM_UPDATE_DIR} CORE_OS_PACKAGE]
@@ -347,7 +451,7 @@ proc modify_coreos_file { file callback args } {
     ::unpkg_archive $pkg $unpkgdir
     ::cosunpkg_package [file join $unpkgdir content] $cosunpkgdir
 
-    if {[file writable [file join $cosunpkgdir $file]] } {
+    if {[file writable [file join $cosunpkgdir $file]]} {
         eval $callback [file join $cosunpkgdir $file] $args
     } elseif { ![file exists [file join $cosunpkgdir $file]] } {
         die "Could not find $file in CORE_OS_PACKAGE"
@@ -356,7 +460,44 @@ proc modify_coreos_file { file callback args } {
     }
 
     ::cospkg_package $cosunpkgdir [file join $unpkgdir content]
-    ::pkg_archive $unpkgdir $pkg
+    
+    if {[::get_pup_version] >= ${::NEWCFW}} {
+       ::new_pkg_archive $unpkgdir $pkg
+        ::copy_spkg
+    } else {
+        ::pkg_archive $unpkgdir $pkg
+    }
+}
+
+proc modify_coreos_files { files callback args } {
+    log "Modifying CORE_OS files [file tail $files]" 
+    set pkg [file join ${::CUSTOM_UPDATE_DIR} CORE_OS_PACKAGE.pkg]
+    set unpkgdir [file join ${::CUSTOM_UPDATE_DIR} CORE_OS_PACKAGE.unpkg]
+    set cosunpkgdir [file join ${::CUSTOM_UPDATE_DIR} CORE_OS_PACKAGE]
+    
+    ::unpkg_archive $pkg $unpkgdir
+    ::cosunpkg_package [file join $unpkgdir content] $cosunpkgdir
+    
+	foreach file $files {
+        if {[file writable [file join $cosunpkgdir $file]]} {
+		    log "Using file $file now"
+			set ::SELF $file
+            eval $callback [file join $cosunpkgdir $file] $args
+        } elseif { ![file exists [file join $cosunpkgdir $file]] } {
+            die "Could not find $file in CORE_OS_PACKAGE"
+        } else {
+            die "File $file is not writable in CORE_OS_PACKAGE"
+        }
+	}
+
+    ::cospkg_package $cosunpkgdir [file join $unpkgdir content]
+    
+    if {[::get_pup_version] >= ${::NEWCFW}} {
+        ::new_pkg_archive $unpkgdir $pkg	
+        ::copy_spkg
+    } else {
+        ::pkg_archive $unpkgdir $pkg
+    }
 }
 
 proc get_pup_build {} {
@@ -408,11 +549,85 @@ proc sed_in_place {file search replace} {
 }
 
 proc unself {in out} {
-    shell ${::UNSELF} [file nativename $in] [file nativename $out]
+    set FIN [file nativename $in]
+	set FOUT [file nativename $out]
+
+    shell ${::SCETOOL} -d $FIN $FOUT
 }
 
-proc makeself {in out original} {
-    shell ${::MAKESELF} [file nativename $in] [file nativename $out] [file nativename $original]
+# new makeself routine using scetool
+proc makeself {in out} {
+   variable options
+   set fwversiVar ""
+   set versionVar ""
+   set keyRev "00"
+   set authID ""
+   set vendID "ff000000"
+   set selfType ""
+
+    # Reading the pup suffix var and set up fw/self version var 
+    if { ${::SUF} == ${::c} } {
+	    set versionVar "0004003000000000"
+        set fwversiVar $versionVar 
+	} elseif { ${::SUF} == ${::d} } {
+	    set versionVar "0004003100000000"
+        set fwversiVar $versionVar
+	} elseif { ${::SUF} == ${::a} } {
+	    set versionVar "0003004100000000"
+        set fwversiVar $versionVar
+	} elseif { ${::SUF} == ${::b} } {
+	    set versionVar "0003005500000000"
+        set fwversiVar $versionVar
+	}
+
+    # Read the loaded self and set authentication/vendor ID, self type and key revision 
+    if { ${::SELF} == "lv0" } {
+		set authID "1ff0000001000001"
+		set selfType "LV0"
+    }
+	if { ${::SELF} == "appldr" } {
+	    set authID "1ff000000c000001"
+		set selfType "LDR"
+	}
+	if { ${::SELF} == "lv1.self" } {
+		set authID "1ff0000002000001"
+		set selfType "LV1"
+    }
+	if { ${::SELF} == "lv2_kernel.self" } {
+		set authID "1050000003000001"
+		set vendID "05000002"
+		set selfType "LV2"
+    }
+	if { ${::SELF} == "spu_pkg_rvk_verifier.self" } {
+		set authID "1070000022000001"
+		set vendID "07000001"
+		set selfType "ISO"
+		set keyRev "01"
+    }
+	
+	# Load the pre-defined application var into a loop and compare it against the loaded self
+	foreach patchSelf ${::APPSELF} {
+	    if { ${::SELF} == $patchSelf } {
+		    if { ${::SELF} == "dev_flash/vsh/module/vsh.self" } {
+		        set authID "10700005ff000001"
+			} else {
+		        set authID "1070000052000001"
+			}
+			
+		    set vendID "01000002"
+		    set selfType "APP"
+			
+			if { ${::SUF} == ${::c} || ${::SUF} == ${::d} } {
+				set keyRev "1C"
+		    } elseif { ${::SUF} == ${::a} } {
+				set keyRev "04"
+			} elseif { ${::SUF} == ${::b} } {
+				set keyRev "0A"
+			}
+        }
+	}
+	
+    shell ${::SCETOOL} -0 SELF -1 TRUE -2 $keyRev -3 $authID -4 $vendID -5 $selfType -A $versionVar -6 $fwversiVar -e $in $out
 }
 
 proc decrypt_self {in out} {
@@ -420,18 +635,22 @@ proc decrypt_self {in out} {
     catch_die {unself $in $out} "Could not decrypt file [file tail $in]"
 }
 
-proc sign_elf {in out original} {
+proc sign_elf {in out} {
     debug "Rebuilding self file [file tail $out]"
-    catch_die {makeself $in $out $original} "Could not rebuild file [file tail $out]"
+    catch_die {makeself $in $out} "Could not rebuild file [file tail $out]"
 }
 
 proc modify_self_file {file callback args} {
     log "Modifying self/sprx file [file tail $file]"
     decrypt_self $file ${file}.elf
     eval $callback ${file}.elf $args
-    sign_elf ${file}.elf ${file}.self $file
+    sign_elf ${file}.elf ${file}.self
+	#file copy -force ${file}.self ${::BUILD_DIR}    # used for debugging to copy the patched elf and new re-signed self to MFW build dir without the need to unpup the whole fw or even a single file
     file rename -force ${file}.self $file
+	#file copy -force ${file}.elf ${::BUILD_DIR}     # same as above
     file delete ${file}.elf
+	debug "Self successful rebuilded"
+	log "Self successful rebuilded"
 }
 
 proc patch_self {file search replace_offset replace {ignore_bytes {}}} {
@@ -569,51 +788,66 @@ proc modify_devflash_file {file callback args} {
 
     create_tar $tar_file ${::CUSTOM_DEVFLASH_DIR} dev_flash
 
+    
     set pkg [file join ${::CUSTOM_UPDATE_DIR} $pkg_file]
     set unpkgdir [file join ${::CUSTOM_DEVFLASH_DIR} $pkg_file]
-    pkg_archive $unpkgdir $pkg
+    if {[::get_pup_version] >= ${::NEWCFW}} {
+        ::new_pkg_archive $unpkgdir $pkg
+        ::copy_spkg
+    } else {
+        ::pkg_archive $unpkgdir $pkg
+    }
 }
 
 proc modify_devflash_files {path files callback args} {
+
     foreach file $files {
         set file [file join $path $file]
         log "Modifying dev_flash file [file tail $file]"
-
+        
         set tar_file [find_devflash_archive ${::CUSTOM_DEVFLASH_DIR} $file]
-
+        
         if {$tar_file == ""} {
             debug "Skipping [file tail $file] not found"
             continue
         }
-
+        
         set pkg_file [file tail [file dirname $tar_file]]
         debug "Found [file tail $file] in $pkg_file"
-
+       
         file delete -force [file join ${::CUSTOM_DEVFLASH_DIR} dev_flash]
         extract_tar $tar_file ${::CUSTOM_DEVFLASH_DIR}
-
+	 
         if {[file writable [file join ${::CUSTOM_DEVFLASH_DIR} $file]] } {
+		    set ::SELF $file
+			log "Using file $file now"
             eval $callback [file join ${::CUSTOM_DEVFLASH_DIR} $file] $args
         } elseif { ![file exists [file join ${::CUSTOM_DEVFLASH_DIR} $file]] } {
             debug "Could not find $file in ${::CUSTOM_DEVFLASH_DIR}"
-            continue
         } else {
             die "File $file is not writable in ${::CUSTOM_DEVFLASH_DIR}"
         }
-
+        
         file delete -force $tar_file
-
+        
         create_tar $tar_file ${::CUSTOM_DEVFLASH_DIR} dev_flash
-
+        
         set pkg [file join ${::CUSTOM_UPDATE_DIR} $pkg_file]
         set unpkgdir [file join ${::CUSTOM_DEVFLASH_DIR} $pkg_file]
-        pkg_archive $unpkgdir $pkg
+        if {[::get_pup_version] >= ${::NEWCFW}} {
+            ::new_pkg_archive $unpkgdir $pkg
+            ::copy_spkg
+        } else {
+            ::pkg_archive $unpkgdir $pkg
+        }
     }
+	
 }
 
 proc modify_upl_file {callback args} {
     log "Modifying UPL.xml file"
     set file "content"
+    
     set pkg [file join ${::CUSTOM_UPDATE_DIR} UPL.xml.pkg]
     set unpkgdir [file join ${::CUSTOM_UPDATE_DIR} UPL.xml.unpkg]
 
@@ -627,7 +861,12 @@ proc modify_upl_file {callback args} {
         die "File $file is not writable in $unpkgdir"
     }
 
-    ::pkg_archive $unpkgdir $pkg
+    if {[::get_pup_version] >= ${::NEWCFW}} {
+        ::new_pkg_archive $unpkgdir $pkg
+        ::copy_spkg
+    } else {
+        ::pkg_archive $unpkgdir $pkg
+    }
 }
 
 proc remove_node_from_xmb_xml { xml key message} {
@@ -664,7 +903,6 @@ proc remove_pkg_from_upl_xml { xml key message } {
         }
         incr i 1
     }
-
     return $xml
 }
 
@@ -685,7 +923,6 @@ proc remove_pkgs_from_upl_xml { xml key message } {
         }
         incr i 1
     }
-
     return $xml
 }
 
@@ -731,6 +968,11 @@ proc modify_rco_file {rco_file callback args} {
     modify_devflash_file $rco_file callback_modify_rco $callback $args
 }
 
+# RCO callback for multiple files
+proc modify_rco_files {path rco_files callback args} {
+    modify_devflash_files $path $rco_files callback_modify_rco $callback $args
+}
+
 proc get_header_key_upl_xml { file key message } {
     debug "Getting \"$message\" information from UPL.xml"
 
@@ -754,9 +996,9 @@ proc set_header_key_upl_xml { file key replace message } {
         set fd [open $file r]
         set xml [read $fd]
         close $fd
-
+     
         set xml [string map [list $search $replace] $xml]
-
+     
         set fd [open $file w]
         puts -nonewline $fd $xml
         close $fd
