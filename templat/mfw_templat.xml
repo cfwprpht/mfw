@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<XMBML version="1.0">
+	<View id="root">
+		<Attributes>
+		 <Table key="seg_emulator">
+				<Pair key="focus_priority"><String>-1</String></Pair>
+			</Table>
+		</Attributes>
+		<Items>
+			<Query
+				class="type:x-xmb/folder-pixmap"
+				key="seg_package_manager"
+				src="#seg_package_manager"
+				/>
+			<Query
+			  class="type:x-xmb/folder-pixmap"
+			  key="seg_emulator"
+			  src="#seg_emulator"
+			  />
+			<Query
+			  class="type:x-xmb/folder-pixmap"
+			  key="seg_hbrew"
+			  src="#seg_hbrew"
+			  />
+			<Query
+				class="type:x-xmb/folder-pixmap"
+				key="seg_gameexit"
+				src="sel://localhost/ingame?path=category_network.xml#seg_gameexit&type=network"
+				/>
+			<Query
+				class="type:x-xmb/folder-pixmap"
+				key="gameDir"
+				attr="gameDir"
+				src="xcb://localhost/query?limit=2048&table=MMS_MEDIA_TYPE_HDD&sort=+Game:Common.stat.rating+Game:Common.title&cond=Aa+Game:Common.title+Ae+Game:Game.category CB"
+			  />
+		</Items>
+	</View>
+	
+	
+  <View id="seg_package_manager">
+		<Attributes>
+			<Table key="package_manager">
+				<Pair key="icon"><String>/dev_flash/mfw/imgs/PKGManager.png</String></Pair>
+				<Pair key="title"><String>★ MFW PKG Manager</String></Pair>
+				<Pair key="info"><String></String></Pair>
+				<Pair key="child"><String>segment</String></Pair>
+				<Pair key="ingame"><String>enable</String></Pair>
+			</Table>
+		</Attributes>		
+		<Items><Query class="type:x-xmb/folder-pixmap" key="package_manager" attr="package_manager" src="#seg_pkg_files"/></Items>
+	</View>
+	<View id="seg_pkg_files"><Items><Query class="type:x-xmb/folder-pixmap" key="pkg_files" attr="pkg_files" src="#seg_pkg_fixed"/></Items></View>
+
+  <View id="seg_pkg_fixed">
+		<Attributes>
+			<Table key="pkg_install">
+				<Pair key="icon"><String>/dev_flash/mfw/imgs/Copy.png</String></Pair>
+				<Pair key="title"><String>Install PKG</String></Pair>
+				<Pair key="info"><String></String></Pair>
+				<Pair key="child"><String>segment</String></Pair>
+			</Table>
+			<Table key="pkg_delete">
+				<Pair key="icon"><String>/dev_flash/mfw/imgs/Delete.png</String></Pair>
+				<Pair key="title"><String>Delete PKG</String></Pair>
+				<Pair key="info"><String></String></Pair>
+				<Pair key="child"><String>segment</String></Pair>
+			</Table>
+		</Attributes>
+		<Items><Query class="type:x-xmb/folder-pixmap" key="pkg_install" attr="pkg_install" src="#seg_install_pkg_fixed"/></Items>
+		<Items><Query class="type:x-xmb/folder-pixmap" key="pkg_delete"  attr="pkg_delete"  src="#seg_delete_pkg_fixed"/></Items>
+	</View>
+	<View id="seg_install_pkg_fixed"><Items><Query class="type:x-xmb/folder-pixmap" key="install_pkg_fixed" attr="install_pkg_fixed" src="#seg_pkg_install_fixed"/></Items></View>
+	<View id="seg_delete_pkg_fixed"><Items><Query  class="type:x-xmb/folder-pixmap" key="delete_pkg_fixed"  attr="delete_pkg_fixed"  src="#seg_pkg_delete_fixed"/></Items></View>
+	
+	<View id="seg_pkg_install_fixed">
+	  <Attributes>
+	    <Table key="install_flash">
+	      <Pair key="icon"><String>/dev_flash/mfw/imgs/Flash.png</String></Pair>
+	      <Pair key="title"><String>Embended APP's</String></Pair>
+	      <Pair key="info"><String></String></Pair>
+	      <Pair key="str_noitem"><String></String></Pair>
+	      <Pair key="child"><String>segment</String></Pair>
+	    </Table>
+	    <Table key="install_hdd">
+				<Pair key="icon"><String>/dev_flash/mfw/imgs/HDD.png</String></Pair>
+				<Pair key="title"><String>HDD</String></Pair>
+				<Pair key="info"><String></String></Pair>
+				<Pair key="str_noitem"><String></String></Pair>
+				<Pair key="child"><String>segment</String></Pair>
+			</Table>
+			<Table key="install_usb">
+				<Pair key="icon"><String>/dev_flash/mfw/imgs/USBoutline.png</String></Pair>
+				<Pair key="title"><String>USB</String></Pair>
+				<Pair key="info"><String></String></Pair>
+				<Pair key="str_noitem"><String></String></Pair>
+				<Pair key="child"><String>segment</String></Pair>
+			</Table>
+			<Table key="install_orig">
+				<Pair key="icon"><String>/dev_flash/mfw/imgs/USBoutline.png</String></Pair>
+				<Pair key="title"><String>Original</String></Pair>
+				<Pair key="info"><String></String></Pair>
+				<Pair key="str_noitem"><String></String></Pair>
+				<Pair key="child"><String>segment</String></Pair>
+			</Table>
+	  </Attributes>	  
+	  <Items><Query class="type:x-xmb/xmlpackagefolder" key="install_flash" attr="install_flash" src="#seg_pkg_install_flash"/></Items>
+	  <Items><Query class="type:x-xmb/xmlpackagefolder" key="install_hdd"   attr="install_hdd"   src="#seg_pkg_install_hdd0"/></Items>
+	  <Items><Query class="type:x-xmb/xmlpackagefolder" key="install_usb"   attr="install_usb"   src="#seg_pkg_install_usb"/></Items>
+	  <Items><Query class="type:x-xmb/xmlpackagefolder" key="install_orig"  attr="install_orig"  src="#seg_pkg_install_orig"/></Items>
+	</View>	
+	<View id="seg_pkg_install_flash"><Items><Query class="type:x-xmb/xmlpackagefolder" key="host_provider_flash" src="host://localhost/q?path=/dev_flash/mfw&suffix=.pkg&subclass=x-host/package"/></Items></View>		
+	<View id="seg_pkg_install_hdd0"><Items><Query  class="type:x-xmb/xmlpackagefolder" key="host_provider_hdd0"  src="host://localhost/q?path=/dev_hdd0/packages&suffix=.pkg&subclass=x-host/package"/></Items></View>		
+	<View id="seg_pkg_install_usb">
+		<Items>
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_ms" 	src="host://localhost/q?path=/dev_ms/packages&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb0" src="host://localhost/q?path=/dev_usb000/packages&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb1" src="host://localhost/q?path=/dev_usb001/packages&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb2" src="host://localhost/q?path=/dev_usb002/packages&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb3" src="host://localhost/q?path=/dev_usb003/packages&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb4" src="host://localhost/q?path=/dev_usb004/packages&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb5" src="host://localhost/q?path=/dev_usb005/packages&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb6" src="host://localhost/q?path=/dev_usb006/packages&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb7" src="host://localhost/q?path=/dev_usb007/packages&suffix=.pkg&subclass=x-host/package" />
+		</Items>
+	</View>		
+	<View id="seg_pkg_install_orig">
+		<Items>
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_host" src="host://localhost/q?path=/app_home/&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_bdvd" src="host://localhost/q?path=/dev_bdvd&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_ms" 	src="host://localhost/q?path=/dev_ms&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb0" src="host://localhost/q?path=/dev_usb000&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb1" src="host://localhost/q?path=/dev_usb001&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb2" src="host://localhost/q?path=/dev_usb002&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb3" src="host://localhost/q?path=/dev_usb003&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb4" src="host://localhost/q?path=/dev_usb004&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb5" src="host://localhost/q?path=/dev_usb005&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb6" src="host://localhost/q?path=/dev_usb006&suffix=.pkg&subclass=x-host/package" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb7" src="host://localhost/q?path=/dev_usb007&suffix=.pkg&subclass=x-host/package" />
+		</Items>
+	</View>
+			
+	<View id="seg_pkg_delete_fixed">
+		<Attributes>
+			<Table key="delete_hdd">
+				<Pair key="icon"><String>/dev_flash/mfw/imgs/HDD.png</String></Pair>
+				<Pair key="title"><String>HDD</String></Pair>
+				<Pair key="info"><String></String></Pair>
+				<Pair key="str_noitem"><String></String></Pair>				
+				<Pair key="child"><String>segment</String></Pair>
+			</Table>
+			<Table key="delete_usb">
+				<Pair key="icon"><String>/dev_flash/mfw/imgs/USBoutline.png</String></Pair>
+				<Pair key="title"><String>USB</String></Pair>
+				<Pair key="info"><String></String></Pair>
+				<Pair key="str_noitem"><String></String></Pair>
+				<Pair key="child"><String>segment</String></Pair>
+			</Table>
+			<Table key="delete_orig">
+				<Pair key="icon"><String>/dev_flash/mfw/imgs/USBoutline.png</String></Pair>
+				<Pair key="title"><String>Original</String></Pair>
+				<Pair key="info"><String></String></Pair>
+				<Pair key="str_noitem"><String></String></Pair>				
+				<Pair key="child"><String>segment</String></Pair>
+			</Table>
+		</Attributes>
+		<Items><Query class="type:x-xmb/xmlpackagefolder" key="delete_hdd"  attr="delete_hdd"  src="#seg_pkg_delete_hdd0"/></Items>
+		<Items><Query class="type:x-xmb/xmlpackagefolder" key="delete_usb"  attr="delete_usb"  src="#seg_pkg_delete_usb"/></Items>
+		<Items><Query class="type:x-xmb/xmlpackagefolder" key="delete_orig" attr="delete_orig" src="#seg_pkg_delete_orig"/></Items>
+	</View>		
+	<View id="seg_pkg_delete_hdd0"><Items><Query class="type:x-xmb/xmlpackagefolder" key="host_provider_hdd0" src="host://localhost/q?path=/dev_hdd0/packages&suffix=.pkg"/></Items></View>
+	<View id="seg_pkg_delete_usb">
+		<Items>
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_ms" 	src="host://localhost/q?path=/dev_ms/packages&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb0" src="host://localhost/q?path=/dev_usb000/packages&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb1" src="host://localhost/q?path=/dev_usb001/packages&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb2" src="host://localhost/q?path=/dev_usb002/packages&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb3" src="host://localhost/q?path=/dev_usb003/packages&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb4" src="host://localhost/q?path=/dev_usb004/packages&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb5" src="host://localhost/q?path=/dev_usb005/packages&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb6" src="host://localhost/q?path=/dev_usb006/packages&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb7" src="host://localhost/q?path=/dev_usb007/packages&suffix=.pkg" />
+		</Items>
+	</View>
+	<View id="seg_pkg_delete_orig">
+		<Items>
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_ms" 	src="host://localhost/q?path=/dev_ms&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb0" src="host://localhost/q?path=/dev_usb000&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb1" src="host://localhost/q?path=/dev_usb001&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb2" src="host://localhost/q?path=/dev_usb002&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb3" src="host://localhost/q?path=/dev_usb003&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb4" src="host://localhost/q?path=/dev_usb004&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb5" src="host://localhost/q?path=/dev_usb005&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb6" src="host://localhost/q?path=/dev_usb006&suffix=.pkg" />
+			<Query class="type:x-xmb/xmlpackagefolder" key="host_provider_usb7" src="host://localhost/q?path=/dev_usb007&suffix=.pkg" />
+		</Items>
+	</View>
+
+  <View id="seg_emulator">
+	  <Attributes>
+	    <Table key="host_device">
+	      <Pair key="icon"><String>/dev_flash/mfw/imgs/Emulator.png</String></Pair>
+	      <Pair key="title"><String>★ MFW Emulator</String></Pair>
+	      <Pair key="info"><String></String></Pair>
+	      <Pair key="str_noitem"><String>No Emu found</String></Pair>
+	      <Pair key="child"><String>segment</String></Pair>
+	    </Table>
+	  </Attributes>
+	  <Items><Query class="type:x-xmb/folder-pixmap" key="host_device" attr="host_device" src="#seg_emu"/></Items>
+	</View>
+	
+	<View id="seg_emu">
+	  <Items>
+	    <Query
+	      class="type:x-xmb/folder-pixmap"
+	      key="gamDir" 
+	      attr="gameDir"
+	      src="xcb://localhost/query?limit=2048&table=MMS_MEDIA_TYPE_HDD&sort=-Game:Common.stat.rating-Game:Common.title&cond=Aa+Game:Common.title+Ae+Game:Game.category X4"
+	    />
+	  </Items>
+	</View>
+	
+	<View id="seg_hbrew">
+	  <Attributes>
+	    <Table key="host_device">
+	      <Pair key="icon"><String>/dev_flash/mfw/imgs/Homebrew.png</String></Pair>
+	      <Pair key="title"><String>★ MFW Homebrew</String></Pair>
+	      <Pair key="info"><String></String></Pair>
+	      <Pair key="noitem"><String>No Homebrew found</String></Pair>
+	      <Pair key="child"><String>segment</String></Pair>
+	    </Table>
+	  </Attributes>
+	  <Items><Query class="type:x-xmb/folder-pixmap" key="host_device" attr="host_device" src="#seg_brew"/></Items>
+	</View>
+	
+	<View id="seg_brew">
+	  <Items>
+	    <Query
+	      class="type:x-xmb/folder-pixmap"
+	      key="gamDir" 
+	      attr="gameDir"
+	      src="xcb://localhost/query?limit=2048&table=MMS_MEDIA_TYPE_HDD&sort=-Game:Common.stat.rating-Game:Common.title&cond=Aa+Game:Common.title+Ae+Game:Game.category X0"
+	    />
+	  </Items>
+	</View>
+	
+	<View id="seg_gameexit">
+		<Items>
+			<Item class="type:x-xmb/xmlgameexit" key="gameexit" />
+		</Items>
+	</View>
+	
+</XMBML>
