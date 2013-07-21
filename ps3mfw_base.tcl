@@ -452,6 +452,7 @@ proc modify_coreos_file { file callback args } {
     ::cosunpkg_package [file join $unpkgdir content] $cosunpkgdir
 
     if {[file writable [file join $cosunpkgdir $file]]} {
+	    set ::SELF $file
         eval $callback [file join $cosunpkgdir $file] $args
     } elseif { ![file exists [file join $cosunpkgdir $file]] } {
         die "Could not find $file in CORE_OS_PACKAGE"
@@ -498,6 +499,26 @@ proc modify_coreos_files { files callback args } {
     } else {
         ::pkg_archive $unpkgdir $pkg
     }
+}
+
+# proc for "unpackaging" the "CORE_OS" files, and calling
+# the user-specified callback proc for doing any patching of any files, etc,
+# then re-packaging up the CORE_OS files...
+proc patch_coreos_files { callback args } {
+    log "UN-PACKAGING CORE_OS files..."   
+    set pkg [file join ${::CUSTOM_UPDATE_DIR} CORE_OS_PACKAGE.pkg]
+    set unpkgdir [file join ${::CUSTOM_UPDATE_DIR} CORE_OS_PACKAGE.unpkg]
+    set cosunpkgdir [file join ${::CUSTOM_UPDATE_DIR} CORE_OS_PACKAGE]
+    
+    ::unpkg_archive $pkg $unpkgdir
+    ::cosunpkg_package [file join $unpkgdir content] $cosunpkgdir
+
+    # now call the callback function to do any patching of files...
+    eval $callback $cosunpkgdir $args
+    
+	log "RE-PACKAGING CORE_OS files..."  
+    ::cospkg_package $cosunpkgdir [file join $unpkgdir content]   
+   	::pkg_archive $unpkgdir $pkg    
 }
 
 proc get_pup_build {} {
@@ -564,6 +585,7 @@ proc makeself {in out} {
    set authID ""
    set vendID "ff000000"
    set selfType ""
+   set compress FALSE
 
     # Reading the pup suffix var and set up fw/self version var 
     if { ${::SUF} == ${::c} } {
@@ -584,6 +606,7 @@ proc makeself {in out} {
     if { ${::SELF} == "lv0" } {
 		set authID "1ff0000001000001"
 		set selfType "LV0"
+		set compress FALSE
     }
 	if { ${::SELF} == "appldr" } {
 	    set authID "1ff000000c000001"
@@ -627,7 +650,7 @@ proc makeself {in out} {
         }
 	}
 	
-    shell ${::SCETOOL} -0 SELF -1 TRUE -2 $keyRev -3 $authID -4 $vendID -5 $selfType -A $versionVar -6 $fwversiVar -e $in $out
+    shell ${::SCETOOL} -0 SELF -1 $compress -2 $keyRev -3 $authID -4 $vendID -5 $selfType -A $versionVar -6 $fwversiVar -e $in $out
 }
 
 proc decrypt_self {in out} {
